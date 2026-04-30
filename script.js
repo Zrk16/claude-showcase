@@ -7,32 +7,37 @@
 
   /* ---------- Cursor ---------- */
   const cursorEl = document.querySelector("[data-cursor]");
-  if (cursorEl && !reduce && matchMedia("(hover:hover)").matches) {
+  if (cursorEl && !reduce && matchMedia("(hover:hover) and (pointer:fine)").matches) {
     let tx = 0, ty = 0, x = 0, y = 0;
-    addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; });
+    let raf = 0;
+    const HOVER_SEL = "a, button, [data-tilt], [data-magnetic], .card, .cap, .design, .rail";
+
+    addEventListener("pointermove", (e) => {
+      tx = e.clientX; ty = e.clientY;
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+
     const tick = () => {
-      x += (tx - x) * 0.22;
-      y += (ty - y) * 0.22;
-      cursorEl.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
-      requestAnimationFrame(tick);
+      x += (tx - x) * 0.5;
+      y += (ty - y) * 0.5;
+      cursorEl.style.transform = `translate3d(${x - 13}px, ${y - 13}px, 0)`;
+      if (Math.abs(tx - x) > 0.1 || Math.abs(ty - y) > 0.1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = 0;
+      }
     };
-    tick();
 
-    addEventListener("mousedown", () => cursorEl.classList.add("is-press"));
-    addEventListener("mouseup",   () => cursorEl.classList.remove("is-press"));
+    addEventListener("pointerdown", () => cursorEl.classList.add("is-press"));
+    addEventListener("pointerup",   () => cursorEl.classList.remove("is-press"));
 
-    const hoverables = "a, button, [data-tilt], [data-magnetic], .card, .cap, .design, .rail";
-    document.querySelectorAll(hoverables).forEach((el) => {
-      el.addEventListener("mouseenter", () => cursorEl.classList.add("is-hover"));
-      el.addEventListener("mouseleave", () => cursorEl.classList.remove("is-hover"));
+    document.addEventListener("pointerover", (e) => {
+      const hit = e.target.closest(HOVER_SEL);
+      cursorEl.classList.toggle("is-hover", !!hit);
     });
-    document.querySelectorAll("p, h1, h2, h3, h4, h5, pre, span").forEach(el => {
-      el.addEventListener("mouseenter", (e) => {
-        if (e.target.closest("a, button, [data-tilt], [data-magnetic], .card, .cap, .design")) return;
-        cursorEl.classList.add("is-text");
-      });
-      el.addEventListener("mouseleave", () => cursorEl.classList.remove("is-text"));
-    });
+  } else if (cursorEl) {
+    cursorEl.style.display = "none";
+    document.body.style.cursor = "auto";
   }
 
   /* ---------- Nav scrolled state ---------- */
@@ -241,32 +246,28 @@
     });
   }
 
-  /* ---------- Terminal typing reveal (when in view) ---------- */
+  /* ---------- Terminal row reveal ---------- */
   const stream = document.querySelector("[data-stream]");
-  if (stream && !reduce) {
-    const original = stream.innerHTML;
-    stream.innerHTML = "";
-    let played = false;
-    const play = () => {
-      if (played) return;
-      played = true;
-      // simple line-by-line reveal
-      const tmp = document.createElement("div");
-      tmp.innerHTML = original;
-      const lines = original.split("\n");
-      let idx = 0;
-      const tick = () => {
-        if (idx > lines.length) return;
-        stream.innerHTML = lines.slice(0, idx).join("\n");
-        idx += 1;
-        setTimeout(tick, 220);
+  if (stream) {
+    const rows = stream.querySelectorAll(".t-row");
+    if (reduce) {
+      rows.forEach(r => r.classList.add("is-in"));
+    } else {
+      let played = false;
+      const play = () => {
+        if (played) return;
+        played = true;
+        rows.forEach((row, i) => {
+          setTimeout(() => row.classList.add("is-in"), 180 + i * 220);
+        });
       };
-      tick();
-    };
-    if ("IntersectionObserver" in window) {
-      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { play(); io.disconnect(); } }), { threshold: 0.35 });
-      io.observe(stream);
-    } else play();
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((es) => es.forEach(e => {
+          if (e.isIntersecting) { play(); io.disconnect(); }
+        }), { threshold: 0.3 });
+        io.observe(stream);
+      } else play();
+    }
   }
 
   /* ---------- Draggable rail ---------- */

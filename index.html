@@ -216,17 +216,16 @@
       <span></span><span></span><span></span>
       <span class="terminal__path">~/projects/field-guide  •  claude</span>
     </div>
-    <div class="terminal__body">
-      <pre class="terminal__stream" data-stream>
-<span class="t-prompt">$</span> <span class="t-cmd">claude</span> <span class="t-arg">"refactor the auth middleware to use the new session store"</span>
-<span class="t-claude">●</span> <span class="t-think">Reading <u>src/middleware/auth.ts</u> and three files it touches…</span>
-<span class="t-claude">●</span> <span class="t-think">The new store is in <u>src/lib/session.ts</u>. I'll thread it through.</span>
-<span class="t-claude">●</span> <span class="t-do">Editing <u>src/middleware/auth.ts</u>  <span class="t-diff">+34  −18</span></span>
-<span class="t-claude">●</span> <span class="t-do">Editing <u>src/middleware/__tests__/auth.test.ts</u>  <span class="t-diff">+12  −3</span></span>
-<span class="t-claude">●</span> <span class="t-do">Running <code>pnpm test auth</code></span>
-<span class="t-ok">  ✓ 14 passed in 0.42s</span>
-<span class="t-claude">●</span> <span class="t-think">Done. The middleware now reads from <u>SessionStore</u>; cookie names unchanged for backwards compatibility.</span>
-<span class="t-prompt">$</span> <span class="t-cursor">▍</span></pre>
+    <div class="terminal__body" data-stream>
+      <div class="t-row"><span class="t-prompt">$</span> <span class="t-cmd">claude</span> <span class="t-arg">"refactor the auth middleware to use the new session store"</span></div>
+      <div class="t-row"><span class="t-claude">●</span> <span class="t-think">Reading <u>src/middleware/auth.ts</u> and three files it touches&hellip;</span></div>
+      <div class="t-row"><span class="t-claude">●</span> <span class="t-think">The new store lives in <u>src/lib/session.ts</u>. I&rsquo;ll thread it through.</span></div>
+      <div class="t-row"><span class="t-claude">●</span> <span class="t-do">Editing <u>src/middleware/auth.ts</u> <span class="t-diff">+34&nbsp;&minus;18</span></span></div>
+      <div class="t-row"><span class="t-claude">●</span> <span class="t-do">Editing <u>src/middleware/__tests__/auth.test.ts</u> <span class="t-diff">+12&nbsp;&minus;3</span></span></div>
+      <div class="t-row"><span class="t-claude">●</span> <span class="t-do">Running <code>pnpm test auth</code></span></div>
+      <div class="t-row t-row--ok"><span class="t-ok">&nbsp;&nbsp;&check; 14 passed in 0.42s</span></div>
+      <div class="t-row"><span class="t-claude">●</span> <span class="t-think">Done. Middleware reads from <u>SessionStore</u>; cookie names unchanged.</span></div>
+      <div class="t-row"><span class="t-prompt">$</span> <span class="t-cursor">&#9612;</span></div>
     </div>
   </div>
 
